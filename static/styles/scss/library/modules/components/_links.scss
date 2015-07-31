@@ -1,0 +1,17 @@
+@mixin links {
+    // Include all links
+    @include link();
+}
+
+// Link
+@mixin link($color: inherit) {
+    .link {
+        color: $color;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+

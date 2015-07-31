@@ -1,0 +1,35 @@
+// A module of arrows
+
+// Include one of these to turn that element into an arrow.
+@mixin arrow-up($arrow-length, $arrow-color, $arrow-width:$arrow-length*2) {
+    width: 0;
+	height: 0;
+	display: block;
+	border-left: $arrow-width/2 solid transparent;
+	border-right: $arrow-width/2 solid transparent;
+	border-bottom: $arrow-length solid $arrow-color;
+}
+@mixin arrow-down($arrow-length, $arrow-color, $arrow-width:$arrow-length*2) {
+    width: 0;
+	height: 0;
+	display: block;
+    border-left: $arrow-width/2 solid transparent;
+	border-right: $arrow-width/2 solid transparent;
+	border-top: $arrow-length solid $arrow-color;
+}
+@mixin arrow-left($arrow-length, $arrow-color) {
+    width: 0;
+	height: 0;
+	display: block;
+	border-top: $arrow-length solid transparent;
+	border-bottom: $arrow-length solid transparent;
+	border-right: $arrow-length solid $arrow-color;
+}
+@mixin arrow-right($arrow-length, $arrow-color) {
+    width: 0;
+	height: 0;
+	display: block;
+	border-top: $arrow-length solid transparent;
+	border-bottom: $arrow-length solid transparent;
+	border-left: $arrow-length solid $arrow-color;
+}

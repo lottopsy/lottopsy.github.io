@@ -1,0 +1,118 @@
+// Expected HTML. Include multitoggle mixin in styles of outer div.
+/*
+<div>
+  <input id="slow" type="radio" name="speed"/>
+  <label for="slow" title="Slow"></label>
+  <input id="med" type="radio" name="speed" checked/>
+  <label for="med" title="Medium"></label>
+  <input id="fast" type="radio" name="speed"/>
+  <label for="fast" title="Fast"></label>
+  <input id="ultra" type="radio" name="speed"/>
+  <label for="ultra" title="Ultra"></label>
+  <input id="max" type="radio" name="speed"/>
+  <label for="max" title="Max"></label>
+</div>
+*/
+
+// Multitoggle dimensions
+$multitoggle-height: 75px;
+$multitoggle-width: 150px;
+$multitoggle-gutter: 5px;
+$multitoggle-outer-radius: 7px;
+$multitoggle-inner-radius: 5px;
+
+// Multitoggle background
+$multitoggle-bg-background: #333;
+$multitoggle-bg-font-size: 16px;
+$multitoggle-bg-font-weight: 400;
+$multitoggle-bg-text-color: #777;
+$multitoggle-bg-text-shadow: 0 1px 1px black;
+$multitoggle-bg-text-transform: none;
+$multitoggle-bg-letter-spacing: 0.1em;
+
+// Multitoggle foreground
+$multitoggle-fg-background: #a3120a;
+$multitoggle-fg-font-size: 16px;
+$multitoggle-fg-font-weight: 400;
+$multitoggle-fg-text-color: #fff;
+$multitoggle-fg-text-shadow: none;
+$multitoggle-fg-text-transform: uppercase;
+$multitoggle-fg-letter-spacing: 0.1em;
+
+// Multitoggle shadows
+$multitoggle-shadow-size: 8px;
+$multitoggle-shadow-spread: -5px;
+$multitoggle-shadow-color: #000;
+
+@mixin multitoggle {
+    // Include this mixin among the styles of the multitoggle container
+
+    $multitoggle-shadow-top: inset 0 $multitoggle-shadow-size $multitoggle-shadow-size $multitoggle-shadow-spread $multitoggle-shadow-color;
+    $multitoggle-shadow-right: inset (-$multitoggle-shadow-size) 0 $multitoggle-shadow-size $multitoggle-shadow-spread $multitoggle-shadow-color;
+    $multitoggle-shadow-bottom: inset 0 (-$multitoggle-shadow-size) $multitoggle-shadow-size $multitoggle-shadow-spread $multitoggle-shadow-color;
+    $multitoggle-shadow-left: inset $multitoggle-shadow-size 0 $multitoggle-shadow-size $multitoggle-shadow-spread $multitoggle-shadow-color;
+
+    @include clearfix;
+
+    & > input {
+        display: none;
+        &:checked + label:after {
+            display: inline-block;
+        }
+    }
+    & > label { //background for each item
+        background: $multitoggle-bg-background;
+        @include box-shadow($multitoggle-shadow-top, $multitoggle-shadow-bottom);
+        color: $multitoggle-bg-text-color;
+        cursor: pointer;
+        display: block;
+        float: left;
+        font-weight: $multitoggle-bg-font-weight;
+        height: $multitoggle-height;
+        letter-spacing: $multitoggle-bg-letter-spacing;
+        position: relative;
+        text-align: center;
+        @include text-shadow($multitoggle-bg-text-shadow);
+        text-transform: $multitoggle-bg-text-transform;
+        width: $multitoggle-width;
+
+        &:first-of-type {
+            @include box-shadow($multitoggle-shadow-top, $multitoggle-shadow-bottom, $multitoggle-shadow-left);
+            @include border-top-left-radius($multitoggle-outer-radius);
+            @include border-bottom-left-radius($multitoggle-outer-radius);
+        }
+        &:last-of-type {
+            @include box-shadow($multitoggle-shadow-top, $multitoggle-shadow-bottom, $multitoggle-shadow-right);
+            @include border-top-right-radius($multitoggle-outer-radius);
+            @include border-bottom-right-radius($multitoggle-outer-radius);
+        }
+        &:before { //more background for each item
+            content: attr(title);
+            display: inline-block;
+            font-size: $multitoggle-bg-font-size;
+            height: $multitoggle-height;
+            line-height: $multitoggle-height;
+            vertical-align: middle;
+        }
+        &:after { //foreground for each item
+            background: $multitoggle-fg-background;
+            @include border-radius($multitoggle-inner-radius);
+            color: $multitoggle-fg-text-color;
+            content: attr(title);
+            cursor: default;
+            display: none;
+            font-size: $multitoggle-fg-font-size;
+            font-weight: $multitoggle-fg-font-weight;
+            height: $multitoggle-height - 2 * $multitoggle-gutter;
+            left: $multitoggle-gutter;
+            letter-spacing: $multitoggle-fg-letter-spacing;
+            line-height: $multitoggle-height - 2 * $multitoggle-gutter;
+            position: absolute;
+            @include text-shadow($multitoggle-fg-text-shadow);
+            text-transform: $multitoggle-fg-text-transform;
+            top: $multitoggle-gutter;
+            vertical-align: middle;
+            width: $multitoggle-width - 2 * $multitoggle-gutter;
+        }
+    }
+}

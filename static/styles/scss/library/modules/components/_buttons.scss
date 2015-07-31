@@ -1,0 +1,66 @@
+// A module of buttons
+
+// Button
+@mixin button {
+    .button {
+        cursor: pointer;
+        outline: 0;
+
+        @include button-border();
+        @include button-color(black, white);
+        @include button-font($font-weight: $font-weight-bold);
+        @include button-spacing($button-padding: 4px 10px);
+
+        &.warning {
+            @include button-border(2px);
+            @include button-color(blue, $bootstrap-red, blue);
+        }
+        &.small {
+            @include button-font($font-size: $font-size-small);
+            @include button-spacing($button-padding: 2px 5px);
+        }
+        &.large {
+            @include button-font($font-size: $font-size-large);
+            @include button-spacing($button-padding: 6px 15px);
+        }
+        &.round {
+            @include border-radius(4px);
+        }
+    }
+}
+
+// Button border properties.
+@mixin button-border( $border-width: 1px, $border-style: solid ) {
+    border-style: $border-style;
+    border-width: $border-width;
+}
+
+// Button color properties.
+@mixin button-color( $text-color: #000, $bg-color: #fff, $border-color: false ) {
+    @if $border-color {
+        border-color: $border-color;
+    } @else {
+        border-color: darken($bg-color, 40%);
+    }
+    color: $text-color;
+    @include background-image( linear-gradient( $bg-color, darken($bg-color,4%) ) );
+
+    &:hover, &:focus {
+        @include background-image( linear-gradient( $bg-color, darken($bg-color,12%) ) );
+    }
+    &:active {
+        background: darken($bg-color, 12%);
+    }
+}
+
+// Button font properties.
+@mixin button-font( $font-style: normal, $font-variant: normal, $font-weight: bold,
+                    $font-size: medium, $font-family: sans-serif ) {
+    font: $font-style $font-variant $font-weight $font-size/normal $font-family;
+}
+
+// Button spacing properties.
+@mixin button-spacing($button-margin: 0, $button-padding: 4px 10px) {
+    margin: $button-margin;
+    padding: $button-padding;
+}

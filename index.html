@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="description" content="Dissect the lottery. Lottopsy is an interactive lottery number picker for Powerball and Mega Millions.">
+    <link href="static/images/favicon.ico" rel="shortcut icon" type="image/ico">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <link href="static/styles/css/main.css" rel="stylesheet">
+    <script src="static/js/jquery-ui.js"></script>
+    <script>
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+     ga('create', 'UA-55004178-1', 'auto');
+     ga('send', 'pageview');
+
+    </script>
+    <title>Lottopsy</title>
+</head>
+<body>
+    <svg version="1.1" baseProfile="full"
+         xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewbox="0 0 100 100"
+         style="display:none">
+        <defs>
+            <g id="lock-body">
+                <path d="M8,50 H92 V100 H8 Z"></path>
+                <circle cx="50" cy="65" r="6" fill="white"></circle>
+                <polygon points="50,65 45,82 55,82" fill="white"></polygon>
+            </g>
+            <g id="lock-loop-closed">
+                <path d="M14,51 V35 C14,20 32,15 50,15 C68,15 86,20 86,35 V55
+                         H74 V35 C74,31 62,27 50,27 C38,27 26,31 26,35 V51 Z"></path>
+            </g>
+            <g id="lock-loop-open">
+                <use xlink:href="#lock-loop-closed" transform="rotate(22,80,50)"></use>
+            </g>
+        </defs>
+    </svg>
+
+    <svg version="1.1" baseProfile="full"
+         xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         viewbox="0 0 200 200"
+         style="display:none">
+        <defs>
+            <g id="question-mark">
+                <path d="m165.33 113.44a103.61 103.61 0 1 1 -207.22 0 103.61 103.61 0 1 1 207.22 0z"
+                      transform="matrix(.93739 0 0 .93739 42.143 -6.3392)" fill="none"></path>
+                <path d="m100 0c-55.2 0-100 44.8-100 100-5.0495e-15 55.2 44.8 100 100 100s100-44.8 100-100-44.8-100-100-100zm0 12.812c48.13 0 87.19 39.058 87.19 87.188s-39.06 87.19-87.19 87.19-87.188-39.06-87.188-87.19 39.058-87.188 87.188-87.188zm1.47 21.25c-5.45 0.03-10.653 0.737-15.282 2.063-4.699 1.346-9.126 3.484-12.876 6.219-3.238 2.362-6.333 5.391-8.687 8.531-4.159 5.549-6.461 11.651-7.063 18.687-0.04 0.468-0.07 0.868-0.062 0.876 0.016 0.016 21.702 2.687 21.812 2.687 0.053 0 0.113-0.234 0.282-0.937 1.941-8.085 5.486-13.521 10.968-16.813 4.32-2.594 9.808-3.612 15.778-2.969 2.74 0.295 5.21 0.96 7.38 2 2.71 1.301 5.18 3.361 6.94 5.813 1.54 2.156 2.46 4.584 2.75 7.312 0.08 0.759 0.05 2.48-0.03 3.219-0.23 1.826-0.7 3.378-1.5 4.969-0.81 1.597-1.48 2.514-2.76 3.812-2.03 2.077-5.18 4.829-10.78 9.407-3.6 2.944-6.04 5.156-8.12 7.343-4.943 5.179-7.191 9.069-8.564 14.719-0.905 3.72-1.256 7.55-1.156 13.19 0.025 1.4 0.062 2.73 0.062 2.97v0.43h21.598l0.03-2.4c0.03-3.27 0.21-5.37 0.56-7.41 0.57-3.27 1.43-5 3.94-7.81 1.6-1.8 3.7-3.76 6.93-6.47 4.77-3.991 8.11-6.99 11.26-10.125 4.91-4.907 7.46-8.26 9.28-12.187 1.43-3.092 2.22-6.166 2.46-9.532 0.06-0.816 0.07-3.03 0-3.968-0.45-7.043-3.1-13.253-8.15-19.032-0.8-0.909-2.78-2.887-3.72-3.718-4.96-4.394-10.69-7.353-17.56-9.094-4.19-1.062-8.23-1.6-13.35-1.75-0.78-0.023-1.59-0.036-2.37-0.032zm-10.908 103.6v22h21.998v-22h-21.998z" fill="white"></path>
+            </g>
+
+        </defs>
+    </svg>
+
+    <header>
+        <div id="navbar" role="navigation">
+            <h1 id="logo">
+                <a class="logo-link" href="/">lottopsy</a>
+            </h1>
+            <div id="game">
+                <input id="game-input" type="checkbox"/>
+                <input id="pb-input" type="radio" name="games" value="pb" class="game-dropdown-input" checked/>
+                <input id="mm-input" type="radio" name="games" value="mm" class="game-dropdown-input"/>
+                <label id="game-select" for="game-input"></label>
+                <div id="game-dropdown">
+                    <label for="pb-input" class="game-item"></label>
+                    <label for="mm-input" class="game-item"></label>
+                </div>
+                <span id="game-dropdown-arrow"></span>
+            </div>
+            <div id="navbar-links">
+                <a id="navbar-about" href="/about">About</a>
+            </div>
+        </div>
+    </header>
+    <div id="page">
+        <div class="page-column">
+
+            <div id="plot-header">
+                <div id="slice-button-box">
+                    <span id="slice-button">Slice</span>
+                </div>
+                <div id="date-box">
+                    <span id="date-title">Dates</span>
+                    <span id="date-lock">
+                        <input id="date-lock-input" type="checkbox">
+                        <label for="date-lock-input">
+                            <svg viewbox="0 0 100 100" >
+                                <use xlink:href="#lock-body" />
+                                <use class="lock-closed" xlink:href="#lock-loop-closed" />
+                                <use class="lock-open" xlink:href="#lock-loop-open" />
+                            </svg>
+                        </label>
+                    </span>
+                    <span id="date-count"></span>
+                    <div id="date-slider">
+                        <div id="date-slider-handle-lower" class="ui-slider-handle"></div>
+                        <div id="date-slider-handle-upper" class="ui-slider-handle"></div>
+                    </div>
+                </div>
+                <div id="trajectory-box">
+                    <span id="trajectory-label">Trajectory</span>
+                    <div id="trajectory-toggle">
+                        <input id="trajectory-off" type="radio" name="trajectory" value="off" checked/>
+                        <label for="trajectory-off" title="Off"></label>
+                        <input id="trajectory-on" type="radio" name="trajectory" value="on"/>
+                        <label for="trajectory-on" title="On"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="plot-wrap">
+
+                <svg version="1.1"
+                     baseProfile="full"
+                     xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     viewbox="0 0 100 100"
+                     id="plot">
+                    <g id="grid-points"></g>
+                    <g id="slices"></g>
+                    <g id="slice-lines">
+                        <line id="slice-line-leader" class="slice-line"></line>
+                    </g>
+                    <g id="lines"></g>
+                    <g id="quickpick-points"></g>
+                    <g id="points"></g>
+                    <g id="multipoints"></g>
+                    <g id="slice-grid-points"></g>
+                </svg>
+
+                <div id="point-report">
+                    <div id="point-report-head">
+                        <span id="point-report-dimension-y"></span>
+                        <span id="point-report-dimension-x"></span>
+                        <span id="point-report-ball-y" class="ball point-report"></span>
+                        <span id="point-report-ball-x" class="ball point-report"></span>
+                    </div>
+                    <div id="point-report-body"></div>
+                </div>
+                <div id="delete-slice">
+                    <span>Delete slice</span>
+                </div>
+
+                <input id="x-input" type="checkbox" class="axis-input"/>
+                <label for="x-input" class="axis-window x">
+                    <span class="axis-panel x">
+                        <span class="ball dimension">1</span>
+                        <span class="ball dimension">2</span>
+                        <span class="ball dimension">3</span>
+                        <span class="ball dimension">4</span>
+                        <span class="ball dimension">5</span>
+                        <span class="ball dimension bonus"></span>
+                    </span>
+                </label>
+                <input id="y-input" type="checkbox" class="axis-input"/>
+                <label for="y-input" class="axis-window y">
+                    <span class="axis-panel y">
+                        <span class="ball dimension">1</span>
+                        <span class="ball dimension">2</span>
+                        <span class="ball dimension">3</span>
+                        <span class="ball dimension">4</span>
+                        <span class="ball dimension">5</span>
+                        <span class="ball dimension bonus"></span>
+                    </span>
+                </label>
+
+            </div>
+        </div>
+
+        <div class="page-column">
+            <div id="quickpick">
+                <div id="quickpick-header">
+                    <span id="quickpick-button">
+                        <span>Quick Pick</span>
+                    </span>
+                </div>
+                <div id="quickpick-numbers"></div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="static/js/app.js"></script>
+
+</body>
+</html>

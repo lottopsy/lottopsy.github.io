@@ -1,0 +1,29 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/bin/npm', 'run', 'bundle' ]
+2 info using npm@2.1.8
+3 info using node@v0.10.32
+4 verbose node symlink /usr/bin/node
+5 verbose stack Error: Failed to parse json
+5 verbose stack Unexpected token }
+5 verbose stack     at parseError (/usr/lib/node_modules/npm/node_modules/read-package-json/read-json.js:378:25)
+5 verbose stack     at parseJson (/usr/lib/node_modules/npm/node_modules/read-package-json/read-json.js:85:51)
+5 verbose stack     at /usr/lib/node_modules/npm/node_modules/read-package-json/read-json.js:59:33
+5 verbose stack     at evalmachine.<anonymous>:271:14
+5 verbose stack     at /usr/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:102:5
+5 verbose stack     at Object.oncomplete (evalmachine.<anonymous>:107:15)
+6 verbose cwd /home/ryan/projects/d3/lottopsy-static/static/js
+7 error Linux 3.2.0-4-amd64
+8 error argv "node" "/usr/bin/npm" "run" "bundle"
+9 error node v0.10.32
+10 error npm  v2.1.8
+11 error file /home/ryan/projects/d3/lottopsy-static/package.json
+12 error code EJSONPARSE
+13 error Failed to parse json
+13 error Unexpected token }
+14 error File: /home/ryan/projects/d3/lottopsy-static/package.json
+15 error Failed to parse package.json data.
+15 error package.json must be actual JSON, not just JavaScript.
+15 error
+15 error This is not a bug in npm.
+15 error Tell the package author to fix their package.json file. JSON.parse
+16 verbose exit [ 1, true ]

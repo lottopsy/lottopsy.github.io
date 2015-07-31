@@ -1,0 +1,845 @@
+// Import modules
+@import "library/modules/base";
+@import "library/modules/components/all";
+@import "library/modules/layout/all";
+@import "library/vendor/jquery-ui-slider";
+
+// Font
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
+//@import url(http://fonts.googleapis.com/css?family=Raleway:400);
+$font-weight-thin: 100;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+$font-family-1: 'Lato', sans-serif;
+$font-family-2: sans-serif;
+//$font-family-3: 'Raleway', 'Lato', sans-serif;
+$logo-font-size: 36px;
+$game-label-font-size: 16px;
+$button-font-size: 14px;
+
+// Colors
+$black: #070707;
+$light-gray: #f0f0f0;
+$gray: #b7b7b7;
+$dark-gray: #808080;
+$charcoal: #333;
+$light-blue: #619af4;
+$blue: #4173c9;
+$dark-blue: #1c488e;
+$teal: #2bbfb2;
+$orange: #f46a00;//#fcc911;
+$light-red: #d9534f;
+$red: #9e0901;//#a3120a;
+$green: #5cdf6c;//#1cdf26;//#5cb85c;//
+$dark-green: #00a518;
+$mm-yellow: #f6c544;
+
+
+
+// Styles
+
+body {
+    color: $black;
+    font-family: $font-family-1;
+    font-weight: $font-weight-light;
+}
+%button-interface {
+    @include border-radius(2px);
+    color: white;
+    cursor: pointer;
+    font-weight: $font-weight-normal;
+}
+
+
+
+// Plot variables
+
+$plot-size: 650px;//square
+$plot-border: 1px solid $gray;
+
+$plot-header-font-size: 16px;
+$plot-header-height: 70px;
+$plot-header-separator-height: 1px;
+
+$slice-button-spacing: 20px;
+
+$point-report-width: 210px;
+$point-report-arrow-length: 6px;
+$point-report-arrow-width: 16px;
+$point-report-dimension-width: 50px;//same as ball width
+$point-report-dimension-spacing: ( $point-report-width - 2 * $point-report-dimension-width ) / 3;
+
+$axis-window-border-radius: 3px;
+
+$ball-color: #f0f0f0;
+$ball-font-size: 20px;
+$ball-size: 50px;
+$ball-padding: 14px;
+$ball-margin: 5px;
+$ball-window: $ball-size + 2 * $ball-margin;
+
+$point-report-ball-spacing: ( $point-report-width - 2 * $ball-size ) / 3;
+
+
+
+// Axes
+
+.axis-input {
+    display: none;
+    &:checked + .axis-window {
+        background-color: $dark-gray;
+        overflow: visible;
+    }
+}
+.axis-window {
+    font-size: 0;//remove extra spacing between balls
+    height: $ball-window;
+    overflow: hidden;
+    position: absolute;
+    width: $ball-window;
+    &.x {
+        bottom: -$ball-window;
+        left: ($plot-size - $ball-window) / 2;
+        @include border-bottom-left-radius($axis-window-border-radius);
+        @include border-bottom-right-radius($axis-window-border-radius);
+    }
+    &.y {
+        left: -$ball-window;
+        top: ($plot-size - $ball-window) / 2;
+        @include border-top-left-radius($axis-window-border-radius);
+        @include border-bottom-left-radius($axis-window-border-radius);
+    }
+}
+.axis-panel {
+    position: absolute;
+    &.x {
+        height: $ball-window;
+        left: -$ball-window; //start at #2
+        white-space: nowrap;
+        width: 7 * $ball-window; //more than enough
+    }
+    &.y {
+        top: 0;
+        width: $ball-window;
+    }
+}
+
+
+
+// Lottery ball
+
+.ball {
+    background-color: $ball-color;
+    @include border-radius(50%);
+    @include box-shadow(inset 2px -2px 6px darken($ball-color,25%), inset -1.2px 1.2px 2.5px darken($ball-color,5%));
+    color: $black;//
+    float:left;
+    font-size: $ball-font-size;//
+    font-weight: $font-weight-bold;//
+    height: $ball-size;
+    margin: $ball-margin;
+    padding-left: $ball-padding;
+    padding-top: $ball-padding;
+    width: $ball-size;
+
+    &.bonus { //default bonus ball style (powerball)
+        background-color: $red;
+        color: white;
+        @include box-shadow(inset 2px -2px 6px darken($red,25%), inset -1.2px 1.2px 2.5px darken($red,5%));
+    }
+    &.bonus.mm { //mega-millions mega ball
+        background-color: $mm-yellow;
+        @include box-shadow(inset 2px -2px 6px darken($mm-yellow,25%), inset -1.2px 1.2px 2.5px darken($mm-yellow,5%));
+    }
+    &.dimension {
+        cursor: pointer;
+    }
+    &.dimension:before {
+        content: "#";
+    }
+    &.dimension.bonus:before {
+        content: "";
+    }
+    &.point-report {
+        margin-left: $point-report-ball-spacing;
+        margin-right: 0;
+    }
+}
+
+
+
+// Plot header
+
+#plot-header {
+    @include clearfix;
+    font-size: $plot-header-font-size;
+    height: $plot-header-height;
+    margin: 0 auto;
+    @include user-select(none);
+    width: $plot-size;
+}
+
+
+
+// Slice
+$slice-button-box-width: 130px;
+
+#slice-button-box {
+    float: left;
+    padding-left: 1px;
+    padding-right: $slice-button-spacing;
+    padding-top: 1px;
+    width: 20%;
+}
+#slice-button {
+    background: $blue;
+    @include border-radius(3px);
+    color: white;
+    cursor: pointer;
+    display: block;
+    font-size: 20px;
+    font-weight: $font-weight-normal;
+    height: $plot-header-height - $slice-button-spacing;
+    letter-spacing: 0.08em;
+    padding-top: 15px;
+    text-align: center;
+    width: 100%;
+}
+
+
+
+// Date
+$date-box-width: 420px;
+$date-lock-size: 20px;
+$date-slider-height: 20px;
+$date-slider-handle-height: 24px;
+$date-slider-handle-width: 70px;
+$date-slider-box-shadow: inset 0 0 3px $charcoal;
+
+#date-box {
+    border-left: $plot-border;
+    border-right: $plot-border;
+    border-top: $plot-border;
+    @include border-top-left-radius(3px);
+    height: $plot-header-height;
+    float: left;
+    padding-top: 8px;
+    width: $date-box-width;
+}
+#date-title {
+    float: left;
+    padding-left: $date-slider-handle-width / 4;
+}
+#date-lock {
+    fill: $teal;
+    float: right;
+    height: $date-lock-size;
+    margin-right: $date-slider-handle-width / 8;
+    margin-top: -5px;
+    width: $date-lock-size;
+}
+#date-lock-input {
+    display: none;
+    & + label {
+        cursor: pointer;
+        display: block;
+        height: $date-lock-size;
+        width: $date-lock-size;
+    }
+    & + label .lock-closed {
+        display: none;
+    }
+    &:checked + label .lock-closed {
+        display: inline;
+    }
+    &:checked + label .lock-open {
+        display: none;
+    }
+}
+#date-count {
+    float: right;
+    padding-right: $date-slider-handle-width / 8;
+}
+#date-slider {
+    border: none;
+    @include border-radius(2px);
+    @include box-shadow($date-slider-box-shadow);
+    float: left;
+    height: $date-slider-height;
+    margin-top: 14px;
+    margin-left: $date-slider-handle-width / 2 + 2px;
+    width: $date-box-width - $date-slider-handle-width - 6px;
+
+    & .ui-slider-range {
+        background-color: $light-gray;
+        @include box-shadow($date-slider-box-shadow);
+    }
+    & .ui-slider-handle {
+        background-color: $teal;
+        border: none;
+        @include border-radius(2px);
+        @include box-shadow($date-slider-box-shadow);
+        color: white;
+        font-size: 12px;
+        font-weight: $font-weight-normal;
+        height: $date-slider-handle-height;
+        margin-left: -$date-slider-handle-width / 2;
+        padding-top: 5.5px;
+        text-align: center;
+        top: - ( $date-slider-handle-height - $date-slider-height ) / 2;
+        width: $date-slider-handle-width;
+        &.ui-state-active {
+            background: darken( $teal, 10% );
+            z-index: 99;
+        }
+    }
+}
+
+
+
+// Trajectory
+$trajectory-box-width: $plot-size - $slice-button-box-width - $date-box-width;
+
+#trajectory-box {
+    border-right: $plot-border;
+    border-top: $plot-border;
+    @include border-top-right-radius(3px);
+    float: left;
+    height: $plot-header-height;
+    white-space: nowrap;
+    width: $trajectory-box-width;
+}
+#trajectory-label {
+    display: block;
+    margin-top: 8px;
+    text-align: center;
+}
+
+// Override multitoggle default variables for trajectory toggle (on/off)
+
+// Multitoggle dimensions
+$multitoggle-height: 20px;
+$multitoggle-width: 34px;
+$multitoggle-gutter: 1px;
+$multitoggle-outer-radius: 2px;
+$multitoggle-inner-radius: 1px;
+
+// Multitoggle background
+$multitoggle-bg-background: $charcoal;
+$multitoggle-bg-font-size: 12px;
+$multitoggle-bg-font-weight: $font-weight-light;
+$multitoggle-bg-text-color: $gray;
+$multitoggle-bg-text-shadow: none;//0 0.1em 0.1em $black;
+$multitoggle-bg-text-transform: uppercase;
+$multitoggle-bg-letter-spacing: -0.01em;
+
+// Multitoggle foreground
+$multitoggle-fg-background: $teal;//$light-blue;//
+$multitoggle-fg-font-size: 12px;
+$multitoggle-fg-font-weight: $font-weight-normal;
+$multitoggle-fg-text-color: #fff;
+$multitoggle-fg-text-shadow: none;
+$multitoggle-fg-text-transform: uppercase;
+$multitoggle-fg-letter-spacing: -0.01em;
+
+// Multitoggle shadows
+$multitoggle-shadow-size: 0;//2px;
+$multitoggle-shadow-spread: 0;//-4px;
+$multitoggle-shadow-color: $black;
+
+#trajectory-toggle {
+    @include multitoggle;
+    margin: 12px auto;
+    width: 2 * $multitoggle-width;
+}
+
+
+
+// Plot
+
+#plot-wrap {
+    border: $plot-border;
+    height: $plot-size;
+    margin: 0 auto $ball-window;
+    position: relative;
+    @include user-select(none);
+    width: $plot-size;
+}
+#plot {
+    height: $plot-size;
+    width: $plot-size;
+}
+.single-point, .multi-point, .slice-grid-point {
+    cursor: pointer;
+}
+#point-report {
+    color: white;
+    cursor: default;
+    font-size: 12px;
+    position: absolute;
+    width: $point-report-width;
+    z-index: 10; //put above axes
+}
+#point-report-head {
+    background: $charcoal;
+    display: none;
+    font-weight: $font-weight-bold;
+    height: 85px;
+    padding-top: 4px;
+    position: relative;
+    &:after { //arrow
+        @include arrow-down( $point-report-arrow-length, $charcoal, $point-report-arrow-width );
+        content: "";
+        position: absolute;
+        bottom: 1 - $point-report-arrow-length;
+        left: $point-report-width / 2 - 8px;
+    }
+}
+#point-report-dimension-x, #point-report-dimension-y {
+    float: left;
+    font-size: 15px;
+    margin-left: $point-report-dimension-spacing;
+    text-align: center;
+    width: $point-report-dimension-width;
+}
+#point-report-body {
+    background: $charcoal;
+    border-top: 1px solid $dark-gray;
+    display: none;
+    max-height: 85px;
+    overflow: auto;
+    padding: 5px 0;
+    position: relative; //put above arrow;
+    word-spacing: 2px;
+}
+.point-report-date, .point-report-numbers {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 2px 0;
+}
+.point-report-bonus {
+    color: $light-red;
+    display: inline-block;
+    margin-left: 6px;
+}
+
+
+
+#delete-slice {
+    background: $charcoal;
+    @include border-radius(3px);
+    color: white;
+    cursor: pointer;
+    display: none;
+    font-size: 12px;
+    height: 30px;
+    padding-top: 8px;
+    position: absolute;
+    text-align: center;
+    width: 90px;
+}
+#slice-grid-points {
+    display: none;
+}
+.slice-grid-point {
+    fill: $light-blue;
+    &.slice-path-point {
+        fill: $dark-blue;
+    }
+}
+.slice-line {
+    stroke: $light-blue;
+    stroke-linecap: round;
+    stroke-width: 0.6;
+    &.error {
+        stroke: $red;
+    }
+}
+.slice {
+    cursor: pointer;
+    fill: $blue;
+    &.slice-hover {
+        fill: $dark-blue;
+    }
+}
+.quickpick-point {
+    cursor: pointer;
+    fill: $green;
+    &.fail {
+        fill: $light-red;
+    }
+    &.flashing {
+        display: none;
+    }
+}
+.line {
+    stroke: $charcoal;
+    stroke-width: 0.4;
+}
+
+
+
+// Quick Pick
+
+$quickpick-border: 1px solid $dark-gray;
+$quickpick-delete-size: 10px;
+$quickpick-width: 420px;
+
+#quickpick {
+    @include user-select(none);
+    padding-left: 20px;
+    width: $quickpick-width;
+}
+
+// Quickpick Button
+
+$qp-btn-color: $red;
+$qp-btn-color-dark: darken($qp-btn-color,12%);
+$qp-btn-color-light: lighten($qp-btn-color,4%);
+$qp-btn-radius: 6px;
+$qp-btn-transition: .1s ease-in-out;
+$qp-btn-text-shadow: 0 -1px 1px $qp-btn-color-dark;
+$qp-btn-text-glow: 0 0 4px rgba(255, 255, 255, 0.5);
+// shadows
+$qp-btn-thickness: 6px;
+$qp-btn-side-face: 0 $qp-btn-thickness 0 $qp-btn-color-dark;
+$qp-btn-cast-shadow-large: 0 11px 15px rgba(0, 0, 0, .35);
+$qp-btn-cast-shadow-small: 0 9px 7px rgba(0, 0, 0, .3);
+$qp-btn-edge-lighting: inset 0 -1px 1px rgba(255, 255, 255, .15);
+
+#quickpick-header {
+    height: $plot-header-height;
+
+}
+#quickpick-button {
+    @include border-radius($qp-btn-radius);
+    @include box-shadow($qp-btn-side-face, $qp-btn-cast-shadow-large);
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 25px;
+    font-weight: $font-weight-normal;
+    @include transition(box-shadow $qp-btn-transition);
+
+    &:active, &:focus {
+        @include box-shadow($qp-btn-side-face, $qp-btn-cast-shadow-small);
+    }
+
+    & span {
+        display: inline-block;
+        padding: 15px 25px;
+        background-color: $qp-btn-color;
+        @include background-image( linear-gradient( rgba($qp-btn-color-light,0.8), rgba($qp-btn-color-light,0.2) ) );
+        @include border-radius($qp-btn-radius);
+        @include box-shadow($qp-btn-edge-lighting);
+        line-height: 1;
+        text-shadow: $qp-btn-text-shadow;
+        @include transition(background-color .2s ease-in-out, transform $qp-btn-transition);
+    }
+
+    &:hover span {
+        background-color: $qp-btn-color-light;
+        text-shadow: $qp-btn-text-shadow, $qp-btn-text-glow;
+    }
+
+    &:active span {
+        @include transform(translate(0, $qp-btn-thickness / 2));
+    }
+}
+
+// Quickpick Numbers
+$quickpick-numbers-margin-top: 30px;
+
+#quickpick-numbers {
+    background-color: $dark-gray;
+    max-height: $plot-size;
+    overflow: auto;
+}
+.quickpick-number {
+    background-color: $green;
+    border: $quickpick-border;
+    border-bottom: none;
+    cursor: pointer;
+    display: block;
+    overflow: hidden;
+    padding-bottom: 6px;
+    padding-left: 10px;
+    position: relative;
+
+    &.fail {
+        background-color: $light-red;
+    }
+    &.flashing {
+        background-color: white;
+    }
+    &:last-child {
+        border-bottom: $quickpick-border;
+    }
+    &:hover > .quickpick-number-delete {
+        display: block;
+    }
+}
+.quickpick-number-delete {
+    background: url(../../images/x-symbol.png);
+    background-repeat: no-repeat;
+    background-size: $quickpick-delete-size $quickpick-delete-size;
+    background-position: center center;
+    cursor: pointer;
+    display: none;
+    height: $quickpick-delete-size;
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    width: $quickpick-delete-size;
+}
+.quickpick-number-header {
+    display: block;
+    font-size: 14px;
+    height: 20px;
+    margin-right: 25px;
+    overflow: hidden;
+    padding-top: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.quickpick-number-body {
+    @include clearfix;
+    display: block;
+}
+
+
+
+/* Header and page depend on $ball-window */
+$navbar-height: 72px;
+$button-padding-v: 7px;
+$page-width: $plot-size + $quickpick-width + 2 * $ball-window;
+$page-padding-h: $ball-window;
+
+
+
+// Header
+
+#navbar {
+    height: $navbar-height;
+    margin: 0 auto;
+    padding: 0 $page-padding-h;
+    width: $page-width;
+}
+#logo {
+    float: left;
+    font-size: $logo-font-size;
+    letter-spacing: 5px;
+    margin-top: 16px;
+}
+.logo-link {
+    color: $black;
+    text-decoration: none;
+}
+#navbar-links {
+    float: right;
+}
+#navbar-about {
+    color: $black;
+    display: inline-block;
+    margin-top: 24px;
+    outline: 0;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+#signin {
+    @extend %button-interface;
+    background: $blue;
+    display: block;
+    font-family: $font-family-2;
+    font-size: $button-font-size;
+    margin-top: ($navbar-height - $button-font-size - 2 * $button-padding-v) / 2;
+    padding: $button-padding-v 12px;
+    text-decoration: none;
+}
+
+
+
+// Page
+$module-border: 1px solid $gray;
+
+#page {
+    @include pie-clearfix;
+    margin: 0 auto;
+    padding: 40px $page-padding-h;
+    width: $page-width;
+
+    &.about {
+        @include column-layout-fractional( 3 );
+        padding-top: 20px;
+    }
+}
+.page-column {
+    float: left;
+}
+
+.module {
+    @include box-shadow(inset 0 4px 6px -5px $gray);//, inset 0 -4px 5px -5px $gray );
+    border: $module-border;
+    font-size: 16px;
+    padding: 20px;
+    position: relative;//contained text highlighting
+
+    & h1 {
+        border-bottom: $module-border;
+        color: $charcoal;
+        font-size: 2.0em;
+        font-weight: $font-weight-normal;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+    }
+    & h2 {
+        border-bottom: $module-border;
+        color: $charcoal;
+        font-size: 1.5em;
+        font-weight: normal;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+    }
+    & p {
+        color: $charcoal;
+        font-weight: $font-weight-normal;
+        line-height: 1.4;
+        margin-bottom: 18px;
+    }
+    & a {
+        color: $teal;
+        text-decoration: none;
+    }
+    & b {
+        font-weight: $font-weight-bold;
+    }
+}
+.info {
+    margin-right: 20px;
+    & > h2 {
+        border-bottom: none;
+        font-weight: $font-weight-bold;
+        padding-top: 10px;
+        margin-bottom: 0;
+    }
+    & p {
+        font-size: 1.25em;
+    }
+}
+
+// Game
+
+$game-height: 52px;
+$game-width: 240px;
+$game-arrow-length: 6px;
+$game-arrow-width: 15px;
+$game-border: 1px solid $gray;//$dark-gray
+$game-highlight-color: $light-gray;//$teal;//
+
+#game {
+    float: left;
+    height: $game-height;
+    margin-top: 12px;
+    margin-left: 35px;
+    position: relative;
+    @include user-select(none);
+    width: $game-width;
+}
+/*
+#game:before {
+    content: "Game";
+    cursor: default;
+    font-size: $game-label-font-size;
+    position: absolute;
+    left: -54px;
+    top: ($game-height - $game-label-font-size) / 2;
+}
+*/
+#game-dropdown-arrow {
+    @include arrow-down($game-arrow-length, $dark-gray, $game-arrow-width);
+    content: "";
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: ($game-height - $game-arrow-length) / 2;
+}
+#game-input {
+    display: none;
+}
+#game-input:checked ~ #game-select {
+    //background-color: darken($light-gray,3%);
+    @include border-bottom-left-radius(0);
+    @include border-bottom-right-radius(0);
+    @include box-shadow(inset 0 3px 6px $dark-gray);
+}
+#game-input:checked ~ #game-dropdown {
+    max-height: 2 * $game-height;
+}
+#game-select {
+    background-repeat: no-repeat;
+    //background-color: $light-gray;
+    border: $game-border;
+    @include border-radius(4px);
+    cursor: pointer;
+    display: block;
+    height: $game-height;
+    width: $game-width;
+    @include transition(border-radius .1s ease);
+}
+#game-dropdown {
+    border-left: $game-border;
+    border-right: $game-border;
+    max-height: 0;
+    overflow: hidden;
+    // put above plot
+    position: relative;
+    z-index: 100;
+    @include transition(max-height .1s ease);
+}
+.game-dropdown-input {
+    display: none;
+}
+#pb-input:checked ~ #game-dropdown > label[for=pb-input],
+#mm-input:checked ~ #game-dropdown > label[for=mm-input] {
+    background-color: $game-highlight-color;
+}
+%pb-background {
+    background-image: url(../../images/pb.png);
+    background-size: auto $game-height - 22px;
+    background-position: 20px center;
+}
+%mm-background {
+    background-image: url(../../images/mm.png);
+    background-size: auto $game-height - 12px;
+    background-position: 65px center;
+}
+#pb-input:checked ~ #game-select {
+    @extend %pb-background;
+}
+#mm-input:checked ~ #game-select {
+    @extend %mm-background;
+}
+.game-item {
+    background-repeat: no-repeat;
+    background-color: white;
+    border-bottom: $game-border;
+    cursor: pointer;
+    display: block;
+    height: $game-height;
+    &:hover {
+        background-color: $game-highlight-color;
+    }
+}
+label[for=pb-input] {
+    @extend %pb-background;
+}
+label[for=mm-input] {
+    @extend %mm-background;
+}
+
+
+

@@ -1,0 +1,67 @@
+// A module for centering things
+
+// Placeholder for styles common to parents with centered children.
+%center-parent {
+    @include display-flex(flex);
+    width: 100%;
+}
+
+@mixin centercolumn {
+    // A "centercolumn" element is centered horizontally within and
+    // vertically fills the height of its "centercolumn-parent" element.
+    // The "centercolumn-parent" element fills its parent horizontally.
+    // The "centercolumn-parent" element should enclose only one "centercolumn" element.
+
+    .centercolumn-parent {
+        @extend %center-parent;
+    }
+
+    .centercolumn {
+        //height: 100%;
+        margin: 0 auto;
+    }
+}
+
+@mixin centerbox {
+    // The "centerbox" element is centered horizontallly and vertically
+    // within the "centerbox-parent" element.
+    // The "centerbox-parent" element should enclose only one "centerbox" element.
+
+    .centerbox-parent {
+        @extend %center-parent;
+        @include justify-content(center);
+        @include align-items(center);
+        height: 100%;
+    }
+
+    .centerbox {
+        //margin: auto; //should be handled by justify-content(center) & align-items(center) in parent
+
+        // Define a new positioning context.
+        // Among other things, this will contain the highlighting of children elements.
+        position: relative;
+    }
+}
+
+// Vertical centering
+// centervertical and centervertical-parent are meant to be used together.
+// Include the "centervertical" mixin in an element to center it vertically.
+// The parent of that element should include the "centervertical-parent" mixin.
+// The $height of the "centervertical-parent" element must be provided.
+// The $font-size of the "centervertical" element can optionally be provided.
+
+@mixin centervertical-parent($height) {
+    @include box-sizing(content-box);
+    font-size: 0;
+    height: $height;
+    line-height: $height;
+}
+
+@mixin centervertical($font-size) {
+    display: inline-block;
+    font-size: $font-size;
+    line-height: 1;
+    position: relative;
+    /* vertical-align is for inline elements */
+    vertical-align: middle;
+}

@@ -1,0 +1,12 @@
+{
+  "name": "lottopsy",
+  "version": "1.0.0",
+  "description": "Dissect the lottery",
+  "main": "index.js",
+  "scripts": {
+    "data": "python process_data.py",
+    "bundle": "browserify static/js/index.js > static/js/app.js",
+    "clean": "rm data/mm.js && rm data/pb.js"
+  },
+  "author": "Ryan Gomoto"
+}

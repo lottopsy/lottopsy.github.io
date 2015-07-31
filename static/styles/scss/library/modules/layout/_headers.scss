@@ -1,0 +1,18 @@
+@mixin headers {
+    // Include all headers
+    @include fixed-header($fixed-header-height);
+}
+
+@mixin fixed-header($height) {
+    .fixed-header {
+        background-color: white;
+        height: $height;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 99;
+    }
+    body {
+        margin-top: $height;
+    }
+}

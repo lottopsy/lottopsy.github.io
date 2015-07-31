@@ -1,0 +1,55 @@
+// A module for putting things into columns
+
+@mixin column-layout {
+    // The "column-layout" class is the parent container for columns defined
+    // in the "column-layout-absolute" and "column-layout-fractional" mixins.
+    // Include either mixin inside a co-class of the "column-layout" class.
+
+    .column-layout {
+        @include clearfix;
+    }
+    .column-layout > [class*="column-"] {
+        float: left;
+    }
+}
+
+@mixin column-layout-gutter($gutter-top: 20px, $gutter-right-left: 20px, $gutter-bottom: 20px) {
+    // Include this mixin inside of a co-class of ".column-layout"
+    // Gutter sizes could have been defined in the .column-layout selector,
+    // but this way each column layout can have different gutter sizes,
+    // while the column-layout mixin needs to be included just once.
+
+    padding: $gutter-top 0 $gutter-bottom $gutter-right-left;
+    & > [class*="column-"] {
+        padding-right: $gutter-right-left;
+    }
+}
+
+@mixin column-layout-absolute($column-width-list) {
+    // Include this mixin inside of a co-class of ".column-layout"
+    // to enable the layout to have columns of specific widths.
+    // When calling the mixin, list the column widths in order.
+    // Name the columns with the classes .column-1, .column-2,
+    // etc. in the same order.
+
+    @for $i from 1 through length($column-width-list) {
+        & > .column-#{$i} {
+            width: nth($column-width-list, $i);
+        }
+    }
+}
+
+@mixin column-layout-fractional($denominator) {
+    // Include this mixin inside of a co-class of ".column-layout"
+    // to enable the layout to have column widths as fractions of the layout.
+    // Pass the fraction denominator to the mixin.
+    // The "column-x-y" elements take up a fraction x/y of the width of the "column-layout" element.
+    // For example, passing a denominator of 5 defines the classes
+    // .column-1-5, .column-2-5, ... .column-4-5 with widths 20%, 40%, ... 80%.
+
+    @for $i from 1 to $denominator {
+        & > .column-#{$i}-#{$denominator} {
+            width: percentage($i/$denominator);
+        }
+    }
+}

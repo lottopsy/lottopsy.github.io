@@ -1,0 +1,26 @@
+// All modules assume base was imported first
+
+@import "compass";
+@include global-reset;
+
+// Make heights of html and body 100%
+// Now, if the first div in the body has height: 100%, it will fill the height of the window.
+html {
+    height: 100%;
+    //width: 100%;
+}
+body {
+    height: 100%;
+    //width: 100%;
+}
+
+// Remove all padding
+// Firefox user-agent stylesheet adds padding on button active state
+* {
+    padding: 0;
+}
+
+// Put everything in a border-box
+*, *:before, *:after {
+    @include box-sizing(border-box);
+}
